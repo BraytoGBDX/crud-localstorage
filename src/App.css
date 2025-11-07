@@ -1,0 +1,129 @@
+/* ======== ESTILOS GENERALES ======== */
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #dff1ff, #ffffff);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  color: #2d89ef;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* ======== CONTENEDOR PRINCIPAL ======== */
+div {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 25px 35px;
+  width: 90%;
+  max-width: 700px;
+  margin-top: 40px;
+}
+
+/* ======== FORMULARIO ======== */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.formulario input {
+  padding: 10px 12px;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  width: 45%;
+  min-width: 150px;
+}
+
+.formulario input:focus {
+  outline: none;
+  border-color: #2d89ef;
+  box-shadow: 0 0 5px rgba(45, 137, 239, 0.3);
+}
+
+.formulario button {
+  padding: 10px 18px;
+  background: #2d89ef;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.formulario button:hover {
+  background: #1c6cd9;
+}
+
+/* ======== TABLA ======== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #2d89ef;
+  color: white;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f7fb;
+}
+
+tbody tr:hover {
+  background-color: #e3f0ff;
+  transition: 0.3s;
+}
+
+/* ======== BOTONES DE ACCIÓN ======== */
+td button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 5px;
+  transition: transform 0.2s ease, color 0.2s;
+}
+
+td button:hover {
+  transform: scale(1.1);
+}
+
+td button:first-child {
+  color: #f1b800;
+}
+
+td button:last-child {
+  color: #d9534f;
+}
+
+/* ======== MENSAJE VACÍO ======== */
+td[colspan="4"] {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}

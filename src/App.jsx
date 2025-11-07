@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import localStorageSlim from "localstorage-slim";
+import '../src/App.css'
 
 function App() {
   const [productos, setProductos] = useState([]);
@@ -64,6 +65,7 @@ function App() {
           value={precio}
           onChange={(e) => setPrecio(e.target.value)}
         />
+        
         <button onClick={agregarProducto}>
           {editIndex !== null ? "Actualizar" : "Agregar"}
         </button>
