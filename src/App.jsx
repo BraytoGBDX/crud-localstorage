@@ -35,7 +35,7 @@ function App() {
 
     setNombre("");
     setPrecio("");
-  };z
+  };
 
   const eliminarProducto = (index) => {
     const nuevos = productos.filter((_, i) => i !== index);
