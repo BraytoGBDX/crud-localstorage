@@ -1,56 +1,99 @@
 import { useState, useEffect } from "react";
-import localStorageSlim from "localstorage-slim";
-import '../src/App.css'
+import "./App.css";
 
 function App() {
+  const DB_NAME = "productosDB";
+  const DB_VERSION = 1;
+  const STORE_NAME = "productos";
+
   const [productos, setProductos] = useState([]);
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
 
-  // Cargar datos desde localStorage al iniciar
+  const openDB = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
+        }
+      };
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject("Error al abrir la base de datos");
+    });
+  };
+
+  const getAllProductos = async () => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const store = tx.objectStore(STORE_NAME);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject("Error al obtener productos");
+    });
+  };
+
+  const addProducto = async (producto) => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).add(producto);
+    await tx.complete;
+  };
+
+  const updateProducto = async (producto) => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put(producto);
+    await tx.complete;
+  };
+
+  const deleteProducto = async (id) => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).delete(id);
+    await tx.complete;
+  };
+
   useEffect(() => {
-    const datosGuardados = localStorageSlim.get("productos") || [];
-    setProductos(datosGuardados);
+    getAllProductos().then(setProductos);
   }, []);
 
-  // Guardar cada vez que cambien los productos
-  useEffect(() => {
-    localStorageSlim.set("productos", productos);
-  }, [productos]);
-
-  const agregarProducto = () => {
+  const agregarProducto = async () => {
     if (!nombre || !precio) return alert("Completa todos los campos");
 
-    if (editIndex !== null) {
-      // Editar
-      const nuevos = [...productos];
-      nuevos[editIndex] = { nombre, precio };
-      setProductos(nuevos);
-      setEditIndex(null);
+    if (editId) {
+      const productoEditado = { id: editId, nombre, precio };
+      await updateProducto(productoEditado);
     } else {
-      // Agregar
-      setProductos([...productos, { nombre, precio }]);
+      await addProducto({ nombre, precio });
     }
 
     setNombre("");
     setPrecio("");
-  };z
-
-  const eliminarProducto = (index) => {
-    const nuevos = productos.filter((_, i) => i !== index);
-    setProductos(nuevos);
+    setEditId(null);
+    getAllProductos().then(setProductos);
   };
 
-  const editarProducto = (index) => {
-    setNombre(productos[index].nombre);
-    setPrecio(productos[index].precio);
-    setEditIndex(index);
+  const editarProducto = (producto) => {
+    setNombre(producto.nombre);
+    setPrecio(producto.precio);
+    setEditId(producto.id);
+  };
+
+  const eliminarProductoHandler = async (id) => {
+    await deleteProducto(id);
+    getAllProductos().then(setProductos);
   };
 
   return (
-    <div>
-      <h1>CRUD de Productos 🛒</h1>
+    <div className="container">
+      <h1>CRUD de Productos 🛒 (IndexedDB)</h1>
 
       <div className="formulario">
         <input
@@ -65,9 +108,8 @@ function App() {
           value={precio}
           onChange={(e) => setPrecio(e.target.value)}
         />
-        
         <button onClick={agregarProducto}>
-          {editIndex !== null ? "Actualizar" : "Agregar"}
+          {editId ? "Actualizar" : "Agregar"}
         </button>
       </div>
 
@@ -87,13 +129,15 @@ function App() {
             </tr>
           ) : (
             productos.map((p, index) => (
-              <tr key={index}>
+              <tr key={p.id}>
                 <td>{index + 1}</td>
                 <td>{p.nombre}</td>
                 <td>${p.precio}</td>
                 <td>
-                  <button onClick={() => editarProducto(index)}>✏️ Editar</button>
-                  <button onClick={() => eliminarProducto(index)}>🗑️ Eliminar</button>
+                  <button onClick={() => editarProducto(p)}>✏️ Editar</button>
+                  <button onClick={() => eliminarProductoHandler(p.id)}>
+                    🗑️ Eliminar
+                  </button>
                 </td>
               </tr>
             ))
