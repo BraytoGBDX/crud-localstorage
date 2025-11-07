@@ -93,7 +93,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1>CRUD de Productos 🛒 (IndexedDB)</h1>
+      <h1>CRUD de Productos con IndexedDB</h1>
 
       <div className="formulario">
         <input
