@@ -8,13 +8,11 @@ function App() {
   const [precio, setPrecio] = useState("");
   const [editIndex, setEditIndex] = useState(null);
 
-  // Cargar datos desde localStorage al iniciar
   useEffect(() => {
     const datosGuardados = localStorageSlim.get("productos") || [];
     setProductos(datosGuardados);
   }, []);
 
-  // Guardar cada vez que cambien los productos
   useEffect(() => {
     localStorageSlim.set("productos", productos);
   }, [productos]);
@@ -23,13 +21,11 @@ function App() {
     if (!nombre || !precio) return alert("Completa todos los campos");
 
     if (editIndex !== null) {
-      // Editar
       const nuevos = [...productos];
       nuevos[editIndex] = { nombre, precio };
       setProductos(nuevos);
       setEditIndex(null);
     } else {
-      // Agregar
       setProductos([...productos, { nombre, precio }]);
     }
 
